@@ -4,7 +4,7 @@
 Simple Telemetry is an open source educational platform designed to help users learn about observability principles and practices in microservice architecture. The application aims to provide a simple yet comprehensive environment for users to understand key concepts and techniques related to monitoring, logging, tracing, and troubleshooting in distributed systems.
 
 The application itself is a simple todo list solution that comprises so far of: 
-- A stripped back registration, login and session management system 
+- A stripped back registration, login and session management system - WIP
 
 and aims to comprise of:
 - A todo list system for creating, editing and deleting simple todo lists
