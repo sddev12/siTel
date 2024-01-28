@@ -52,7 +52,7 @@ func RegisterHandler(app *app.App, c echo.Context) error {
 
 		// Create session ID and set sesion active with POST request to session service
 		sessionId := utils.GenerateSessionId()
-		err = utils.SetSession(fmt.Sprintf("http://%s:3003/set-session", os.Getenv("TODO_SESSION_HOST")), sessionId)
+		err = utils.SetSession(fmt.Sprintf("http://%s:3003/set-session", os.Getenv("SITEL_SESSION_HOST")), sessionId)
 		if err != nil {
 			l.Errorf("set session call failed: %v", err)
 		}
