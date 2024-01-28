@@ -1,0 +1,49 @@
+version: '3.8'
+
+services:
+  redis:
+    image: redis/redis-stack:latest
+    container_name: todo-redis
+    ports: 
+      - "6379:6379"
+    networks:
+      - todo-net
+
+  mongo:
+    image: mongo:latest
+    container_name: todo-mongo
+    ports:
+      - "27017:27017"
+    networks:
+      - todo-net
+
+  todo-iam:
+    build:
+      context: ./todo-iam
+      dockerfile: Dockerfile
+    environment:
+      - MONGO_DB_URI=mongodb://todo-mongo:27017/?directConnection=true&serverSelectionTimeoutMS=2000&appName=mongosh+2.1.1
+      - LOGGING_LEVEL=INFO
+      - TODO_SESSION_HOST=todo-session
+    ports:
+      - "3002:3002"
+    networks:
+      - todo-net
+    container_name: todo-iam
+    
+  todo-session:
+    build:
+      context: ./todo-session
+      dockerfile: Dockerfile
+    environment:
+      - REDIS_HOST=todo-redis
+      - REDIS_PORT=6379
+    ports:
+      - "3003:3003"
+    networks:
+      - todo-net
+    container_name: todo-session
+
+networks:
+  todo-net:
+    driver: bridge

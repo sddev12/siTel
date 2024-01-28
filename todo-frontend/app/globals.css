@@ -1,0 +1,16 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+html, body {
+  background-color: black;
+  color: white;
+}
+
+#submit-button:hover {
+  cursor: pointer;
+}
+
+#register-link:hover {
+  cursor: pointer;
+}
