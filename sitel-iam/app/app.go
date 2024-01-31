@@ -64,11 +64,17 @@ func NewApp() (*App, error) {
 	/*
 		Load Mongodb connection string
 	*/
-	log.Println("Loading mongodb connection string from env")
-	mongoConnectionString := os.Getenv("MONGO_DB_URI")
-	if mongoConnectionString == "" {
-		log.Fatal("No mongo connection string found. Should be in MONGO_DB_URI env variable")
+	log.Println("Building mongodb connection string")
+	mongoDbHost := os.Getenv("MONGO_DB_HOST")
+	if mongoDbHost == "" {
+		log.Fatal("unable to get mongodb host from env vars")
 	}
+	mongoDbPort := os.Getenv("MONGO_DB_PORT")
+	if mongoDbPort == "" {
+		log.Fatal("unable to get mongodb port from env vars")
+	}
+
+	mongoConnectionString := fmt.Sprintf("mongodb://%s:%s/?directConnection=true&serverSelectionTimeoutMS=2000&appName=mongosh+2.1.1", mongoDbHost, mongoDbPort)
 
 	/*
 		Set up Mongodb client
