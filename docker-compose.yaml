@@ -23,7 +23,8 @@ services:
       context: ./sitel-iam
       dockerfile: Dockerfile
     environment:
-      - MONGO_DB_URI=mongodb://sitel-mongo:27017/?directConnection=true&serverSelectionTimeoutMS=2000&appName=mongosh+2.1.1
+      - MONGO_DB_HOST=sitel-mongo
+      - MONGO_DB_PORT=27017
       - LOGGING_LEVEL=INFO
       - SITEL_SESSION_HOST=sitel-session
     ports:
@@ -31,6 +32,8 @@ services:
     networks:
       - sitel-net
     container_name: sitel-iam
+    depends_on:
+      - mongo
     
   sitel-session:
     build:
@@ -44,6 +47,8 @@ services:
     networks:
       - sitel-net
     container_name: sitel-session
+    depends_on:
+      - redis
 
 networks:
   sitel-net:
