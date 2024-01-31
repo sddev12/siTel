@@ -16,7 +16,7 @@ const redisClient = redis
     },
   })
   .on("error", (err) => {
-    console.log("Redis client error", err);
+    console.log("Redis client error: ", err);
   });
 
 redisClient.connect();
@@ -25,11 +25,28 @@ app.use(express.json());
 
 app.post("/set-session", (req, res) => {
   var sessionId = req.body.sessionId;
-  redisClient.set(sessionId, "authorised", {
-    EX: 60,
-  });
+  (async (key, res) => {
+    const setResponse = await redisClient.set(key, "authorised", {
+      EX: 120,
+    });
+    if (setResponse != "OK") {
+      return res.status(500).json({ message: "Failed to create session" });
+    }
 
-  res.status(200).json({ message: "Session stored in Redis" });
+    return res.status(200).json({ message: "Session stored in Redis" });
+  })(sessionId, res);
+});
+
+app.post("/get-session", (req, res) => {
+  var sessionId = req.body.sessionId;
+  (async (key, res) => {
+    const authorised = await redisClient.get(key);
+    if (authorised == null) {
+      return res.status(401).json({ message: "unauthorsied" });
+    }
+
+    return res.status(200).json({ message: "authorised" });
+  })(sessionId, res);
 });
 
 app.listen(port, () => {
