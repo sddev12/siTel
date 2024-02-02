@@ -10,11 +10,15 @@ import (
 	"todo-iam/app"
 	"todo-iam/utils"
 
+	"github.com/google/uuid"
 	"github.com/labstack/echo/v4"
 	"go.mongodb.org/mongo-driver/bson"
 	"go.mongodb.org/mongo-driver/mongo"
 )
 
+/*
+Handler for the POST /register route
+*/
 func RegisterHandler(app *app.App, c echo.Context) error {
 
 	// Alias logger
@@ -62,7 +66,7 @@ func RegisterHandler(app *app.App, c echo.Context) error {
 		l.Infof("User created successfully: %s", string(jsonUser))
 
 		// Create session ID and set sesion active with POST request to session service
-		sessionId := utils.GenerateSessionId()
+		sessionId := uuid.New().String()
 		sessionServiceUrl := fmt.Sprintf("http://%s:3003/set-session", os.Getenv("SITEL_SESSION_HOST"))
 		err = utils.SetSession(sessionServiceUrl, sessionId)
 		if err != nil {

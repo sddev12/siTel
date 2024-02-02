@@ -12,6 +12,9 @@ import (
 	"go.mongodb.org/mongo-driver/mongo"
 )
 
+/*
+Handler for the POST /login route
+*/
 func LoginHandler(app *app.App, c echo.Context) error {
 
 	l := app.Echo.Logger
@@ -47,8 +50,7 @@ func LoginHandler(app *app.App, c echo.Context) error {
 	// User found
 	l.Infof("retreived user from DB - Login successful - User: %s", userResult.Username)
 	l.Info("Generating session token")
-	sessionToken := uuid.New()
-	sessionTokenStr := sessionToken.String()
-	l.Infof("Generated session token: %s", sessionTokenStr)
-	return c.JSON(http.StatusOK, SuccessResponse{SessionId: sessionTokenStr, Message: "User found, successfully logged in"})
+	sessionId := uuid.New().String()
+	l.Infof("Generated session token: %s", sessionId)
+	return c.JSON(http.StatusOK, SuccessResponse{SessionId: sessionId, Message: "User found, successfully logged in"})
 }
