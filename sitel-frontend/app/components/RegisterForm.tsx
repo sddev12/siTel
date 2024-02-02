@@ -1,14 +1,40 @@
 import { useState } from "react";
+import { useRouter } from "next/navigation";
+import Cookies from "js-cookie";
 import Link from "next/link";
 import TextInput from "./TextInput";
 import Button from "./Button";
 
 export default function RegisterForm() {
+  const router = useRouter();
   const [username, setUsername] = useState<string>("");
   const [usernameError, setUsernameError] = useState<boolean>(false);
-  const handleRegisterClick = () => {
+
+  const handleRegisterClick = async () => {
     console.log("Register Button Clicked");
+    const iamServiceHost = process.env.NEXT_PUBLIC_IAM_SERVICE_HOST;
+    const iamServicePort = process.env.NEXT_PUBLIC_IAM_SERVICE_PORT;
+    const iamServiceUrl = `http://${iamServiceHost}:${iamServicePort}/register`;
+
+    console.log("making request to iam /register");
+    const registerResponse = await fetch(iamServiceUrl, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        username: username,
+      }),
+    });
+
+    if (registerResponse.ok) {
+      const responseData = await registerResponse.json();
+      console.log(responseData.sessionId);
+      Cookies.set("sessionId", responseData.sessionId);
+      router.push("/login");
+    }
   };
+
   return (
     <>
       <TextInput
