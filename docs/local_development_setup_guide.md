@@ -93,7 +93,7 @@ go run main.go
 <br>
 
 ## Docker Compose
-You can spin up all services locally with docker compose from the root of the repo
+You can spin up the full application stack locally with docker compose from the root of the repo
 ```
 docker compose up -d --build
 ```
