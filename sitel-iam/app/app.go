@@ -114,5 +114,10 @@ func NewApp() (*App, error) {
 	e.Use(middleware.Logger())
 	e.Logger.SetLevel(loggingLevel)
 
+	e.Use(middleware.CORSWithConfig(middleware.CORSConfig{
+		AllowOrigins: []string{"http://localhost:3000"},
+		AllowMethods: []string{echo.POST},
+	}))
+
 	return &App{Echo: e, Mongo: client}, nil
 }
