@@ -1,11 +1,10 @@
 package handlers
 
-type RegisterResponse struct {
-	LogLevel string `json:"logLevel"`
-	Message  string `json:"message"`
+type ErrorResponse struct {
+	Error string `json:"error"`
 }
 
-type LoginResponse struct {
-	Token string           `json:"token"`
-	Data  RegisterResponse `json:"data"`
+type SuccessResponse struct {
+	SessionId string `json:"sessionId"`
+	Message   string `json:"message"`
 }

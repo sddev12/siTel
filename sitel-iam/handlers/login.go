@@ -20,7 +20,7 @@ func LoginHandler(app *app.App, c echo.Context) error {
 	username := c.FormValue("username")
 	if username == "" {
 		l.Error("No username supplied")
-		return c.JSON(http.StatusBadRequest, RegisterResponse{LogLevel: "WARN", Message: "No username supplied"})
+		return c.JSON(http.StatusBadRequest, ErrorResponse{Error: "no username supplied"})
 	}
 
 	l.Info("Checking if user exists")
@@ -35,13 +35,13 @@ func LoginHandler(app *app.App, c echo.Context) error {
 	// User doesnt exist in DB
 	if err == mongo.ErrNoDocuments {
 		l.Warn("user doest not exist in database")
-		return c.JSON(http.StatusNotFound, RegisterResponse{LogLevel: "ERROR", Message: "User account not found. The user doesn't exist"})
+		return c.JSON(http.StatusNotFound, ErrorResponse{Error: "user account not found. the user doesn't exist"})
 	}
 
 	// Error communicating with the DB
 	if err != nil && err != mongo.ErrNoDocuments {
 		l.Errorf("Unable to retrieve user record from db: %s", err)
-		return c.JSON(http.StatusInternalServerError, RegisterResponse{LogLevel: "ERROR", Message: "An error occurred during user validation"})
+		return c.JSON(http.StatusInternalServerError, ErrorResponse{Error: "an error occurred during user validation"})
 	}
 
 	// User found
@@ -50,5 +50,5 @@ func LoginHandler(app *app.App, c echo.Context) error {
 	sessionToken := uuid.New()
 	sessionTokenStr := sessionToken.String()
 	l.Infof("Generated session token: %s", sessionTokenStr)
-	return c.JSON(http.StatusOK, LoginResponse{Token: sessionTokenStr, Data: RegisterResponse{LogLevel: "Info", Message: "User found, successfully logged in"}})
+	return c.JSON(http.StatusOK, SuccessResponse{SessionId: sessionTokenStr, Message: "User found, successfully logged in"})
 }
