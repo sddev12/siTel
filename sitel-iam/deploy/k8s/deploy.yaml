@@ -1,0 +1,70 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata: 
+  name: sitel-iam
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: sitel-iam
+  template:
+    metadata:
+      labels:
+        app: sitel-iam
+    spec:
+      containers:
+        - name: sitel-iam
+          image: iamsamd/sitel:latest
+          resources:
+            limits:
+              cpu: "1"
+              memory: "1024Mi"
+            requests:
+              cpu: "0.5"
+              memory: "512Mi"
+          envFrom:
+          - configMapRef:
+              name: sitel-iam-configmap
+              
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: sitel-iam
+spec:
+  selector:
+    app: sitel-iam
+  ports:
+  - port: 3002
+    targetPort: 3002
+
+---
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: sitel-ingress
+  labels:
+    name: sitel-ingress
+spec:
+  rules:
+  - host: localhost
+    http:
+      paths:
+      - pathType: Prefix
+        path: "/"
+        backend:
+          service:
+            name: sitel-iam
+            port: 
+              number: 3002
+
+---
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: sitel-iam-configmap
+data:
+  MONGO_DB_HOST: sitel-mongo.sitel.svc.cluster.local
+  MONGO_DB_PORT: "27017"
+  LOGGING_LEVEL: INFO
+  SITEL_SESSION_HOST: sitel-session.sitel.svc.cluster.local
