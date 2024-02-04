@@ -8,7 +8,6 @@ import (
 	"os"
 	"os/user"
 	"todo-iam/app"
-	"todo-iam/utils"
 
 	"github.com/google/uuid"
 	"github.com/labstack/echo/v4"
@@ -68,10 +67,12 @@ func RegisterHandler(app *app.App, c echo.Context) error {
 		// Create session ID and set sesion active with POST request to session service
 		sessionId := uuid.New().String()
 		sessionServiceUrl := fmt.Sprintf("http://%s:3003/set-session", os.Getenv("SITEL_SESSION_HOST"))
-		err = utils.SetSession(sessionServiceUrl, sessionId)
+		sessionResponse, err := setSession(sessionServiceUrl, sessionId)
 		if err != nil {
 			l.Errorf("set session call failed: %v", err)
 		}
+
+		l.Infof("set-session call successful. Message: %s", sessionResponse.Message)
 
 		return c.JSON(http.StatusOK, SuccessResponse{SessionId: sessionId, Message: "Successfully created account"})
 
