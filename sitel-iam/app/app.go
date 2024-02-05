@@ -40,17 +40,14 @@ func stringToLoggingLevel(levelStr string) (elog.Lvl, error) {
 }
 
 func NewApp() (*App, error) {
-	/*
-		Initialise godotenv
-	*/
+
+	// Initialise godotenv
 	log.Println("Initialising godotenv")
 	if err := godotenv.Load(); err != nil {
 		log.Println("No .env file found")
 	}
 
-	/*
-		Load logging level
-	*/
+	// Load logging level
 	log.Println("Loading logging level from env")
 	levelStr := os.Getenv("LOGGING_LEVEL")
 	if levelStr == "" {
@@ -61,9 +58,7 @@ func NewApp() (*App, error) {
 		log.Fatal(err)
 	}
 
-	/*
-		Load Mongodb connection string
-	*/
+	// Load Mongodb connection string
 	log.Println("Building mongodb connection string")
 	mongoDbHost := os.Getenv("MONGO_DB_HOST")
 	if mongoDbHost == "" {
@@ -76,24 +71,18 @@ func NewApp() (*App, error) {
 
 	mongoConnectionString := fmt.Sprintf("mongodb://%s:%s/?directConnection=true&serverSelectionTimeoutMS=2000&appName=mongosh+2.1.1", mongoDbHost, mongoDbPort)
 
-	/*
-		Set up Mongodb client
-	*/
+	// Set up Mongodb client
 	log.Println("Setting mongodb client options")
 	mongoClientOptions := options.Client().ApplyURI(mongoConnectionString)
 
-	/*
-		Create Mongodb client and connect to Mongodb
-	*/
+	// Create Mongodb client and connect to Mongodb
 	log.Println("Creating mongodb client and connecting to mongodb")
 	client, err := mongo.Connect(context.TODO(), mongoClientOptions)
 	if err != nil {
 		return nil, err
 	}
 
-	/*
-		Test Mongodb connection
-	*/
+	// Test Mongodb connection
 	log.Println("Testing mongodb connection...")
 	var result bson.M
 	if err := client.Database("admin").RunCommand(context.TODO(), bson.D{{Key: "ping", Value: 1}}).Decode(&result); err != nil {
@@ -103,14 +92,10 @@ func NewApp() (*App, error) {
 
 	log.Println("App initialisation successful")
 
-	/*
-		Create Echo instance
-	*/
+	// Create Echo instance
 	e := echo.New()
 
-	/*
-		Use Middleware
-	*/
+	// Use Middleware
 	e.Use(middleware.Logger())
 	e.Logger.SetLevel(loggingLevel)
 

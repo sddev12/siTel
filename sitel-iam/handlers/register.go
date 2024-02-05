@@ -25,7 +25,7 @@ func RegisterHandler(app *app.App, c echo.Context) error {
 
 	l.Info("POST /register called")
 
-	// Get username from request bosy
+	// Get username from request body
 	reqBody := new(RegisterRequest)
 	if err := c.Bind(reqBody); err != nil {
 		l.Errorf("failed to parse request body on register request: %v", err)
@@ -37,7 +37,7 @@ func RegisterHandler(app *app.App, c echo.Context) error {
 
 	if username == "" {
 		l.Error("No username supplied")
-		return c.JSON(http.StatusBadRequest, ErrorResponse{Error: "No username supplied"})
+		return c.JSON(http.StatusBadRequest, ErrorResponse{Error: "no username supplied"})
 	}
 
 	l.Info("Checking if user exists")
