@@ -12,15 +12,22 @@ import (
 	"go.mongodb.org/mongo-driver/mongo"
 )
 
-/*
-Handler for the POST /login route
-*/
+// Handler for the POST /login route
 func LoginHandler(app *app.App, c echo.Context) error {
 
 	l := app.Echo.Logger
 
 	l.Info("GET /login called")
-	username := c.FormValue("username")
+	// Get username from request body
+	reqBody := new(RegisterRequest)
+	if err := c.Bind(reqBody); err != nil {
+		l.Errorf("failed to parse request body on register request: %v", err)
+		return c.JSON(http.StatusInternalServerError, ErrorResponse{Error: "failed to parse request body on register request"})
+	}
+
+	username := reqBody.Username
+	l.Infof("Received username: %s", username)
+
 	if username == "" {
 		l.Error("No username supplied")
 		return c.JSON(http.StatusBadRequest, ErrorResponse{Error: "no username supplied"})
