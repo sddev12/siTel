@@ -1,10 +1,17 @@
 import express from "express";
+import morgan from "morgan";
 import redis from "redis";
 import dotenv from "dotenv";
 
+// Init dotenv
 dotenv.config();
 
+// init express
 const app = express();
+
+// use morgan middleware for request and response logging
+app.use(morgan("dev"));
+
 const port = process.env.PORT || 3003;
 const { REDIS_HOST, REDIS_PORT } = process.env;
 
